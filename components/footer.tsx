@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, Facebook, Twitter } from "lucide-react"
+import { Instagram } from "lucide-react"
 import Image from "next/image"
 
 export default function Footer() {
@@ -24,7 +24,7 @@ export default function Footer() {
               innovación.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://www.instagram.com/wbardetapasyvinos/" target="_blanck" className="text-[#C4A962] hover:text-[#D4BC7B] transition-colors">
+              <Link href="https://www.instagram.com/wbardetapasyvinos/" target="_blank" rel="noopener noreferrer" className="text-[#C4A962] hover:text-[#D4BC7B] transition-colors">
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
@@ -60,7 +60,7 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-[#D4BC7B] transition-colors">
               Términos y Condiciones
             </Link>
-            <Link href="/cookies" className="hover:text-[#D4BC7B] transition-colors" target="_blanck">
+            <Link href="/cookies" className="hover:text-[#D4BC7B] transition-colors">
               Política de Cookies
             </Link>
           </div>

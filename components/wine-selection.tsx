@@ -1,7 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Wine, WineIcon as GlassWine } from "lucide-react"
 import Image from "next/image"
 
 const fadeIn = {
@@ -51,7 +50,8 @@ const wines = {
         name: "Montsant",
         do: "D.O. Montsant",
         description: "Coupage mediterráneo con carácter frutal y especiado.",
-       
+        bottlePrice: 34,
+        glassPrice: 7.5,
       }
     ]
   },

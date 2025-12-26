@@ -39,7 +39,7 @@ export default function Hero() {
             className="bg-[#C4A962] hover:bg-[#D4BC7B] text-white transition-colors"
             asChild
           >
-            <a href="https://api.whatsapp.com/send/?phone=541139395205&app_absent=0" target="_blanck">Reservar</a>
+            <a href="https://api.whatsapp.com/send/?phone=541139395205&app_absent=0" target="_blank" rel="noopener noreferrer">Reservar</a>
           </Button>
         </div>
       </div>
