@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Mail, Clock, Instagram } from "lucide-react"
 import Hero from "@/components/hero"
 import RestaurantSection from "@/components/restaurant-section"
@@ -42,7 +41,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex space-x-4">
-                <Link href="https://instagram.com" target="_blanck" className="text-[#C4A962] hover:text-[#D4BC7B] transition-colors">
+                <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-[#C4A962] hover:text-[#D4BC7B] transition-colors">
                   <Instagram className="h-6 w-6" />
                   <span className="sr-only">Instagram</span>
                 </Link>
