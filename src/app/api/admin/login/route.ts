@@ -1,6 +1,8 @@
 import { createHash, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getClientIpFromRequest } from '@/lib/client-ip';
+import { checkAdminLoginRateLimit } from '@/lib/login-rate-limit';
 import {
   ADMIN_SESSION_COOKIE,
   ADMIN_SESSION_DURATION_SECONDS,
@@ -17,6 +19,9 @@ type LoginBody = {
   password?: string;
 };
 
+/**
+ * Single shared password via ADMIN_PASSWORD. For stronger auth later, consider Supabase Auth or similar.
+ */
 export async function POST(request: Request) {
   const adminPassword = process.env.ADMIN_PASSWORD;
   const adminSessionSecret = process.env.ADMIN_SESSION_SECRET;
@@ -28,7 +33,27 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = (await request.json()) as LoginBody;
+  const clientIp = getClientIpFromRequest(request);
+  const rate = await checkAdminLoginRateLimit(clientIp);
+  if (!rate.ok) {
+    return NextResponse.json(
+      { success: false, message: 'Demasiados intentos. Probá de nuevo más tarde.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(rate.retryAfterSec),
+        },
+      }
+    );
+  }
+
+  let body: LoginBody;
+  try {
+    body = (await request.json()) as LoginBody;
+  } catch {
+    return NextResponse.json({ success: false, message: 'Solicitud inválida' }, { status: 400 });
+  }
+
   if (!body.password) {
     return NextResponse.json(
       { success: false, message: 'La contraseña es obligatoria' },
