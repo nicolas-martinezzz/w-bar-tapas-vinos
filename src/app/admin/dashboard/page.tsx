@@ -429,11 +429,14 @@ export default function Dashboard() {
     <div className="space-y-10">
       {/* Resumen: totales globales */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-white tracking-tight">Panel de reservas</h1>
+        <h1 className="text-2xl font-bold text-white tracking-tight" data-testid="dashboard-heading">
+          Panel de reservas
+        </h1>
         <button
           type="button"
           onClick={() => void loadDashboardData('refresh')}
           disabled={refreshing}
+          data-testid="dashboard-refresh"
           className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-600 bg-zinc-800 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700 disabled:opacity-50"
           aria-busy={refreshing}
         >
@@ -464,7 +467,7 @@ export default function Dashboard() {
       </div>
 
       {/* Mapa de sala */}
-      <section id="sala" className="scroll-mt-24">
+      <section id="sala" className="scroll-mt-24" data-testid="dashboard-section-sala">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h2 className="text-xl font-bold text-white">Sala</h2>
@@ -477,12 +480,14 @@ export default function Dashboard() {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
+                data-testid="dashboard-date-input"
                 className="bg-zinc-700 border border-zinc-600 rounded-lg px-3 py-2 text-white"
               />
             </label>
             <button
               type="button"
               onClick={openNewMesa}
+              data-testid="dashboard-add-mesa"
               className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
             >
               + Mesa
@@ -509,7 +514,7 @@ export default function Dashboard() {
       </section>
 
       {/* Tabla del día */}
-      <section id="reservas" className="scroll-mt-24">
+      <section id="reservas" className="scroll-mt-24" data-testid="dashboard-section-reservas">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h2 className="text-xl font-bold text-white">Reservas del día</h2>
@@ -519,6 +524,7 @@ export default function Dashboard() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as StatusFilter)}
+              data-testid="dashboard-reserva-filter"
               className="bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-2 text-white min-w-[10rem]"
               aria-label="Filtrar por estado"
             >
@@ -530,6 +536,7 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={openNewReserva}
+              data-testid="dashboard-new-reserva"
               className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium"
             >
               + Nueva reserva
