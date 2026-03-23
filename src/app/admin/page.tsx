@@ -6,28 +6,69 @@ import { useRouter } from 'next/navigation';
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [checkingSession, setCheckingSession] = useState(true);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('admin_auth') === 'true') {
-      router.push('/admin/dashboard');
-    }
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/admin/session', { method: 'GET' });
+        if (!response.ok) {
+          setCheckingSession(false);
+          return;
+        }
+
+        const data = (await response.json()) as { authenticated?: boolean };
+        if (data.authenticated) {
+          router.push('/admin/dashboard');
+          return;
+        }
+      } catch {
+        // Ignore network errors and let user authenticate manually.
+      }
+
+      setCheckingSession(false);
+    };
+
+    void checkSession();
   }, [router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    if (password === 'K9#mXp$2vL8nQ@7wRtY!') {
-      localStorage.setItem('admin_auth', 'true');
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json()) as { message?: string };
+        setError(payload.message || 'No se pudo iniciar sesión');
+        setLoading(false);
+        return;
+      }
+
       router.push('/admin/dashboard');
-    } else {
-      setError('Contraseña incorrecta');
+    } catch {
+      setError('No se pudo iniciar sesión');
       setLoading(false);
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">

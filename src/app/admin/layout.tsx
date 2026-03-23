@@ -1,28 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (localStorage.getItem('admin_auth') !== 'true') {
-      router.push('/admin');
-    } else {
-      setLoading(false);
-    }
-  }, [router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
-      </div>
-    );
-  }
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    router.push('/admin');
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -33,19 +21,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               W Bar Admin
             </Link>
             <div className="flex gap-6">
-              <Link href="/admin/dashboard" className="text-zinc-300 hover:text-amber-500 transition-colors">
-                Reservas
+              <Link
+                href="/admin/dashboard#sala"
+                className="text-zinc-300 hover:text-amber-500 transition-colors"
+              >
+                Sala
               </Link>
-              <Link href="/admin/dashboard" className="text-zinc-300 hover:text-amber-500 transition-colors">
-                Configuración
+              <Link
+                href="/admin/dashboard#reservas"
+                className="text-zinc-300 hover:text-amber-500 transition-colors"
+              >
+                Reservas
               </Link>
             </div>
           </div>
           <button
-            onClick={() => {
-              localStorage.removeItem('admin_auth');
-              router.push('/admin');
-            }}
+            onClick={handleLogout}
             className="text-zinc-400 hover:text-white transition-colors"
           >
             Cerrar Sesión
