@@ -20,7 +20,7 @@ export default function AdminLogin() {
     setLoading(true);
     setError('');
 
-    if (password === 'Patoloco2323@@@@') {
+    if (password === 'K9#mXp$2vL8nQ@7wRtY!') {
       localStorage.setItem('admin_auth', 'true');
       router.push('/admin/dashboard');
     } else {
