@@ -1,6 +1,7 @@
--- Run this in the Supabase SQL editor (manual migration).
--- Creates mesas, extends reservas, enables RLS (anon has no policies = no access; service role bypasses RLS).
+-- Run once in Supabase: SQL Editor → New query → Run.
+-- Fixes: "Could not find the 'duracion_minutos' column of 'reservas' in the schema cache"
 
+-- 1) Table mesas must exist before mesa_id FK
 CREATE TABLE IF NOT EXISTS public.mesas (
   id BIGSERIAL PRIMARY KEY,
   nombre TEXT NOT NULL,
@@ -11,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.mesas (
   CONSTRAINT mesas_nombre_unique UNIQUE (nombre)
 );
 
+-- 2) Optional FK column on reservas
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -22,6 +24,7 @@ BEGIN
   END IF;
 END $$;
 
+-- 3) Required for the admin API (default 90 minutes per booking slot)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -33,14 +36,5 @@ BEGIN
   END IF;
 END $$;
 
-CREATE INDEX IF NOT EXISTS reservas_mesa_fecha_idx ON public.reservas (mesa_id, fecha)
-  WHERE mesa_id IS NOT NULL;
-
-ALTER TABLE public.mesas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.reservas ENABLE ROW LEVEL SECURITY;
-
--- Optional seed: 20 tables, 8 seats each (skip if mesas already exist)
-INSERT INTO public.mesas (nombre, capacidad, orden)
-SELECT 'Mesa ' || gs, 8, gs
-FROM generate_series(1, 20) AS gs
-ON CONFLICT (nombre) DO NOTHING;
+-- 4) Backfill if column existed as nullable (unlikely)
+UPDATE public.reservas SET duracion_minutos = 90 WHERE duracion_minutos IS NULL;

@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
+import { DEFAULT_RESERVATION_SLOT_MINUTES } from '@/lib/admin-defaults';
 import { requireAdminAuth } from '@/lib/require-admin-auth';
 import { assertNoReservationOverlap, assertPartyFitsMesa } from '@/lib/reserva-validation';
 import { createServiceRoleClient } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
-
-const DEFAULT_DURACION = 90;
 
 type ReservaEstado = 'pendiente' | 'confirmada' | 'cancelada' | 'completada';
 
@@ -92,7 +91,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'VALIDATION', message: 'Personas inválidas.' }, { status: 400 });
   }
 
-  const duracionMinutos = body.duracion_minutos ?? DEFAULT_DURACION;
+  const duracionMinutos = body.duracion_minutos ?? DEFAULT_RESERVATION_SLOT_MINUTES;
   if (!Number.isFinite(duracionMinutos) || duracionMinutos < 1) {
     return NextResponse.json({ error: 'VALIDATION', message: 'Duración inválida.' }, { status: 400 });
   }

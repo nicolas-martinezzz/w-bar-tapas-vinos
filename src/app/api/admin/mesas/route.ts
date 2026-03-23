@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { DEFAULT_MESA_CAPACITY } from '@/lib/admin-defaults';
 import { requireAdminAuth } from '@/lib/require-admin-auth';
 import { createServiceRoleClient } from '@/lib/supabase-server';
 
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'VALIDATION', message: 'El nombre es obligatorio.' }, { status: 400 });
   }
 
-  const capacidad = body.capacidad ?? 4;
+  const capacidad = body.capacidad ?? DEFAULT_MESA_CAPACITY;
   if (!Number.isFinite(capacidad) || capacidad < 1) {
     return NextResponse.json({ error: 'VALIDATION', message: 'La capacidad debe ser mayor que 0.' }, { status: 400 });
   }

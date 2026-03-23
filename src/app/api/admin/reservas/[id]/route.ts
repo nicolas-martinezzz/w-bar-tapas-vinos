@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
+import { DEFAULT_RESERVATION_SLOT_MINUTES } from '@/lib/admin-defaults';
 import { requireAdminAuth } from '@/lib/require-admin-auth';
 import { assertNoReservationOverlap, assertPartyFitsMesa } from '@/lib/reserva-validation';
 import { createServiceRoleClient } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
-
-const DEFAULT_DURACION = 90;
 
 type ReservaEstado = 'pendiente' | 'confirmada' | 'cancelada' | 'completada';
 
@@ -72,7 +71,9 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
           ? null
           : Number(body.mesa_id);
     const nextDuracion =
-      body.duracion_minutos !== undefined ? body.duracion_minutos : (existing.duracion_minutos ?? DEFAULT_DURACION);
+      body.duracion_minutos !== undefined
+        ? body.duracion_minutos
+        : (existing.duracion_minutos ?? DEFAULT_RESERVATION_SLOT_MINUTES);
 
     if (!nextNombre) {
       return NextResponse.json({ error: 'VALIDATION', message: 'El nombre es obligatorio.' }, { status: 400 });

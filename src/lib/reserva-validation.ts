@@ -1,9 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import {
-  intervalsOverlap,
-  parseTimeToMinutes,
-  reservationWindowMinutes,
-} from '@/lib/reserva-overlap';
+import { DEFAULT_RESERVATION_SLOT_MINUTES } from '@/lib/admin-defaults';
+import { intervalsOverlap, reservationWindowMinutes } from '@/lib/reserva-overlap';
 
 type ReservaRow = {
   id: number;
@@ -85,7 +82,7 @@ export async function assertNoReservationOverlap(
   const rows = (data ?? []) as ReservaRow[];
 
   for (const row of rows) {
-    const dur = row.duracion_minutos ?? 90;
+    const dur = row.duracion_minutos ?? DEFAULT_RESERVATION_SLOT_MINUTES;
     let rowWindow: { start: number; end: number };
     try {
       rowWindow = reservationWindowMinutes(row.hora, dur);
@@ -103,4 +100,4 @@ export async function assertNoReservationOverlap(
   return { ok: true };
 }
 
-export { parseTimeToMinutes };
+export { parseTimeToMinutes } from '@/lib/reserva-overlap';
