@@ -26,7 +26,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# tests
+# tests / e2e artifacts
 /test-results/
 /playwright-report/
-/playwright/.cache/
+/coverage/

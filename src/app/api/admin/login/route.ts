@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import {
@@ -5,6 +6,12 @@ import {
   ADMIN_SESSION_DURATION_SECONDS,
   createAdminSessionToken,
 } from '@/lib/admin-session';
+
+function verifyAdminPassword(input: string, expected: string): boolean {
+  const a = createHash('sha256').update(input, 'utf8').digest();
+  const b = createHash('sha256').update(expected, 'utf8').digest();
+  return timingSafeEqual(a, b);
+}
 
 type LoginBody = {
   password?: string;
@@ -29,7 +36,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (body.password !== adminPassword) {
+  if (!verifyAdminPassword(body.password, adminPassword)) {
     return NextResponse.json(
       { success: false, message: 'Credenciales inválidas' },
       { status: 401 }

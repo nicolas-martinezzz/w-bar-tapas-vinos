@@ -2,8 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Playfair_Display, Montserrat } from "next/font/google"
 import "./globals.css"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
+import SiteChrome from "@/components/site-chrome"
 import { restaurant, BASE_URL, GA_ID } from "@/config/restaurant"
 
 const playfair = Playfair_Display({
@@ -103,9 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }} />
       </head>
       <body className="bg-stone-950 text-stone-100 min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   )

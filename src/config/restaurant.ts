@@ -3,6 +3,12 @@ import { RestaurantInfo, OpeningHours, NavItem, GalleryImage } from "@/types/res
 export const BASE_URL = "https://wbardetapasyvinos.com"
 export const GA_ID = "G-LVCGEB768Y"
 
+/** Used for Open-Meteo (admin weather). Override with NEXT_PUBLIC_RESTAURANT_LAT / LNG if needed. */
+export const RESTAURANT_COORDINATES = {
+  latitude: Number(process.env.NEXT_PUBLIC_RESTAURANT_LAT ?? -34.5132),
+  longitude: Number(process.env.NEXT_PUBLIC_RESTAURANT_LNG ?? -58.6085),
+} as const
+
 export const restaurant: RestaurantInfo = {
   name: "W Bar",
   tagline: "Una experiencia única en el corazón de San Isidro",
