@@ -1,20 +1,59 @@
 # W Bar de tapas y vinos
 
-Proyecto web adaptado para un bar de tapas y vinos elegante y moderno.
+Sitio web del restaurante W Bar, ubicado en San Isidro, Buenos Aires.
 
-## Estructura principal
+## Stack
 
-- Navbar elegante y sticky
-- Hero con imagen de fondo, logo y eslogan
-- Sección de presentación/restaurante
-- Menú (platos y vinos)
-- Reservas
-- Footer
-
-## Tecnologías
-
-- Next.js
-- React
+- Next.js 15 (App Router)
+- React 18
 - Tailwind CSS
+- TypeScript
+
+## Estructura del proyecto
+
+```
+src/
+├── app/                    # Páginas y layout
+│   ├── page.tsx             # Home
+│   ├── layout.tsx           # Layout raíz con fonts y SEO
+│   ├── globals.css          # Estilos globales y variables CSS
+│   ├── privacidad/          # Política de privacidad
+│   ├── terms/               # Términos y condiciones
+│   ├── cookies/             # Política de cookies
+│   └── sitemap.ts           # Sitemap dinámico
+├── components/             # Componentes React
+│   ├── navbar.tsx           # Navegación con menú móvil
+│   ├── hero.tsx             # Video hero
+│   ├── restaurant-section/  # Historia del restaurante
+│   ├── menu-section.tsx     # Carta y vinoteca
+│   ├── footer.tsx           # Footer con contacto
+│   └── ui/                  # Componentes base (shadcn/ui)
+├── data/                    # Datos del menú y carta de vinos
+├── config/                  # Configuración centralizada
+├── types/                   # Tipos TypeScript
+├── hooks/                   # Hooks personalizados
+└── lib/                     # Utilidades (cn, utils)
+```
+
+## Datos centralizados
+
+- `src/data/menu.ts` — Carta de comidas (categorías y productos)
+- `src/data/wines.ts` — Carta de vinos
+- `src/config/restaurant.ts` — Info del restaurante, horarios, navegación
+
+Para actualizar precios o platos, editá los archivos en `src/data/`.
+
+## Scripts
+
+```bash
+npm install
+npm run dev      # Desarrollo
+npm run build    # Build de producción
+npm run lint     # Linting
+```
+
+## Deployment
+
+Deploy automático en Netlify via `@netlify/plugin-nextjs`.
 
 
