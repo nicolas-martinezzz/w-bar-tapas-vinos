@@ -1,5 +1,5 @@
 -- Run once in Supabase: SQL Editor → New query → Run.
--- Fixes: "Could not find the 'duracion_minutos' column of 'reservas' in the schema cache"
+-- Fixes missing columns on public.reservas (duracion_minutos, mesa_id, notas, etc.)
 
 -- 1) Table mesas must exist before mesa_id FK
 CREATE TABLE IF NOT EXISTS public.mesas (
@@ -38,3 +38,15 @@ END $$;
 
 -- 4) Backfill if column existed as nullable (unlikely)
 UPDATE public.reservas SET duracion_minutos = 90 WHERE duracion_minutos IS NULL;
+
+-- 5) Optional notes field (admin form)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'reservas' AND column_name = 'notas'
+  ) THEN
+    ALTER TABLE public.reservas
+      ADD COLUMN notas TEXT NULL;
+  END IF;
+END $$;

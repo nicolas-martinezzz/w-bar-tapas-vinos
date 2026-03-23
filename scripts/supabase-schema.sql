@@ -33,6 +33,17 @@ BEGIN
   END IF;
 END $$;
 
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'reservas' AND column_name = 'notas'
+  ) THEN
+    ALTER TABLE public.reservas
+      ADD COLUMN notas TEXT NULL;
+  END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS reservas_mesa_fecha_idx ON public.reservas (mesa_id, fecha)
   WHERE mesa_id IS NOT NULL;
 
