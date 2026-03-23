@@ -3,7 +3,8 @@ import type { Metadata } from "next"
 import { Playfair_Display, Montserrat } from "next/font/google"
 import "./globals.css"
 import SiteChrome from "@/components/site-chrome"
-import { restaurant, BASE_URL, GA_ID } from "@/config/restaurant"
+import GoogleAnalytics from "@/components/google-analytics"
+import { restaurant, BASE_URL } from "@/config/restaurant"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -91,17 +92,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `,
-        }} />
       </head>
       <body className="bg-stone-950 text-stone-100 min-h-screen flex flex-col">
+        <GoogleAnalytics />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

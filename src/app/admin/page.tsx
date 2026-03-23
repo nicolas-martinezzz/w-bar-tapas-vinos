@@ -50,7 +50,16 @@ export default function AdminLogin() {
 
       if (!response.ok) {
         const payload = (await response.json()) as { message?: string };
-        setError(payload.message || 'No se pudo iniciar sesión');
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          setError(
+            retryAfter
+              ? `Demasiados intentos. Probá de nuevo en ${retryAfter} segundos.`
+              : payload.message || 'Demasiados intentos. Probá más tarde.'
+          );
+        } else {
+          setError(payload.message || 'No se pudo iniciar sesión');
+        }
         setLoading(false);
         return;
       }
@@ -65,7 +74,11 @@ export default function AdminLogin() {
   if (checkingSession) {
     return (
       <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+        <div
+          className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"
+          role="status"
+          aria-label="Comprobando sesión"
+        />
       </div>
     );
   }
@@ -80,9 +93,13 @@ export default function AdminLogin() {
 
         <form onSubmit={handleLogin} className="bg-zinc-800 rounded-lg p-6 space-y-4">
           <div>
-            <label className="block text-zinc-300 mb-2">Contraseña</label>
+            <label htmlFor="admin-password" className="block text-zinc-300 mb-2">
+              Contraseña
+            </label>
             <input
+              id="admin-password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-zinc-700 border border-zinc-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500"
@@ -91,12 +108,15 @@ export default function AdminLogin() {
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-red-400 text-sm" role="alert">
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Verificando...' : 'Iniciar Sesión'}
@@ -104,7 +124,9 @@ export default function AdminLogin() {
         </form>
 
         <p className="text-center text-zinc-500 text-sm mt-4">
-          <a href="/" className="hover:text-amber-500">← Volver al sitio</a>
+          <a href="/" className="hover:text-amber-500">
+            ← Volver al sitio
+          </a>
         </p>
       </div>
     </div>

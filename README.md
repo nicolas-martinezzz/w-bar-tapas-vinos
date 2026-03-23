@@ -31,8 +31,7 @@ src/
 ├── data/                    # Datos del menú y carta de vinos
 ├── config/                  # Configuración centralizada
 ├── types/                   # Tipos TypeScript
-├── hooks/                   # Hooks personalizados
-└── lib/                     # Utilidades (cn, utils)
+└── lib/                     # Utilidades
 ```
 
 ## Datos centralizados
@@ -54,6 +53,5 @@ npm run lint     # Linting
 
 ## Deployment
 
-Deploy automático en Netlify via `@netlify/plugin-nextjs`.
-
+Vercel (u otro host Node): configurar variables de entorno y `npm run build`.
 

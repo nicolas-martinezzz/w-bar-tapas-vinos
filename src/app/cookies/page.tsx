@@ -3,7 +3,7 @@ import { restaurant } from "@/config/restaurant"
 
 export default function Cookies() {
   return (
-    <main className="max-w-2xl mx-auto py-12 px-4">
+    <article className="max-w-2xl mx-auto py-12 px-4">
       <h1 className="font-serif text-3xl font-bold mb-6 text-white">Política de Cookies</h1>
       <p className="text-[#8C8C8C] mb-4">
         En <strong className="text-white">{restaurant.name}</strong> utilizamos cookies y tecnologías similares para mejorar tu experiencia en nuestro sitio web.
@@ -38,6 +38,6 @@ export default function Cookies() {
       <p className="text-[#8C8C8C]">
         Esta política puede actualizarse periódicamente. Te recomendamos revisarla regularmente.
       </p>
-    </main>
+    </article>
   )
 }

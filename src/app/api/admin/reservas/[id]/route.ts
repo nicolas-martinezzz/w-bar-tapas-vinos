@@ -3,10 +3,9 @@ import { DEFAULT_RESERVATION_SLOT_MINUTES } from '@/lib/admin-defaults';
 import { requireAdminAuth } from '@/lib/require-admin-auth';
 import { assertNoReservationOverlap, assertPartyFitsMesa } from '@/lib/reserva-validation';
 import { createServiceRoleClient } from '@/lib/supabase-server';
+import type { ReservaEstado } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
-
-type ReservaEstado = 'pendiente' | 'confirmada' | 'cancelada' | 'completada';
 
 type PatchReservaBody = {
   nombre?: string;

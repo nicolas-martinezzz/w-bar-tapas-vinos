@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   AlertTriangle,
   Armchair,
@@ -21,10 +21,18 @@ import {
   Trash2,
   Users,
 } from 'lucide-react';
+import { MesaCard } from '@/components/admin/dashboard-mesa-card';
+import DashboardSkeleton from '@/components/admin/dashboard-skeleton';
 import ReservationCalendarViews, {
   type CalendarViewMode,
 } from '@/components/admin/reservation-calendar-views';
 import { DEFAULT_MESA_CAPACITY, DEFAULT_RESERVATION_SLOT_MINUTES } from '@/lib/admin-defaults';
+import {
+  formatDurationLabel,
+  readAdminApiResponse,
+  type ApiJson,
+  type DashboardPayload,
+} from '@/lib/admin-dashboard-api';
 import { buildMonthGrid, eachDayOfWeekFrom, startOfWeekMondayISO } from '@/lib/dashboard-date-utils';
 import { alertsByReservaId, computeReservaAlerts, summarizeAlerts } from '@/lib/dashboard-reserva-alerts';
 import { restaurant } from '@/config/restaurant';
@@ -34,106 +42,6 @@ import type { DayWeatherPublic } from '@/lib/weather-open-meteo';
 import type { Mesa, Reserva } from '@/lib/supabase';
 
 type StatusFilter = 'todas' | 'pendiente' | 'confirmada' | 'cancelada';
-
-type ApiJson = {
-  error?: string;
-  message?: string;
-  data?: unknown;
-};
-
-async function readApiResponse<T>(res: Response): Promise<{ ok: true; data: T } | { ok: false; message: string }> {
-  const json = (await res.json()) as ApiJson;
-  if (!res.ok) {
-    if (res.status === 401) {
-      window.location.href = '/admin';
-    }
-    return { ok: false, message: json.message || 'Ha ocurrido un error.' };
-  }
-  return { ok: true, data: json.data as T };
-}
-
-type DashboardPayload = {
-  mesas: Mesa[];
-  reservas: Reserva[];
-};
-
-/** Texto amigable para la duración del turno */
-function formatDurationLabel(minutes: number): string {
-  if (minutes >= 60) {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    if (m === 0) {
-      return `${h} h`;
-    }
-    return `${h} h ${m} min`;
-  }
-  return `${minutes} min`;
-}
-
-const MesaCard = memo(function MesaCard({
-  mesa,
-  occupied,
-  onEdit,
-}: {
-  mesa: Mesa;
-  occupied: boolean;
-  onEdit: (m: Mesa) => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => onEdit(mesa)}
-      aria-label={`${mesa.nombre}, capacidad ${mesa.capacidad}, ${!mesa.activa ? 'inactiva' : occupied ? 'ocupada' : 'libre'}`}
-      className={`group text-left rounded-2xl border-2 p-4 transition-all focus:outline-none focus:ring-2 focus:ring-amber-400/70 focus:ring-offset-2 focus:ring-offset-stone-950 ${
-        !mesa.activa
-          ? 'border-stone-700 bg-stone-800/40 opacity-70'
-          : occupied
-            ? 'border-amber-500/50 bg-gradient-to-br from-amber-950/50 to-stone-900 shadow-md'
-            : 'border-emerald-800/50 bg-stone-800/80 hover:border-emerald-600/40 hover:shadow-lg'
-      }`}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <Armchair
-          className={`h-6 w-6 shrink-0 ${
-            !mesa.activa ? 'text-stone-500' : occupied ? 'text-amber-400' : 'text-emerald-400'
-          }`}
-          aria-hidden
-        />
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-            !mesa.activa
-              ? 'bg-stone-700 text-stone-400'
-              : occupied
-                ? 'bg-amber-500/20 text-amber-200'
-                : 'bg-emerald-500/20 text-emerald-200'
-          }`}
-        >
-          {!mesa.activa ? 'Apagada' : occupied ? 'Ocupada' : 'Libre'}
-        </span>
-      </div>
-      <p className="mt-3 font-bold text-white text-lg leading-tight">{mesa.nombre}</p>
-      <p className="text-stone-400 text-sm mt-1">
-        Hasta <span className="text-stone-200 font-medium">{mesa.capacidad}</span> personas
-      </p>
-      <p className="text-xs text-stone-500 mt-3 group-hover:text-stone-400">Tocá para editar</p>
-    </button>
-  );
-});
-
-function DashboardSkeleton() {
-  return (
-    <div className="animate-pulse space-y-8">
-      <div className="h-10 w-64 rounded-xl bg-stone-800" />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-28 rounded-2xl bg-stone-800 border border-stone-700" />
-        ))}
-      </div>
-      <div className="h-48 rounded-2xl bg-stone-800 border border-stone-700" />
-      <div className="h-72 rounded-2xl bg-stone-800 border border-stone-700" />
-    </div>
-  );
-}
 
 const inputClass =
   'w-full rounded-xl border border-stone-600 bg-stone-800/90 px-4 py-3 text-base text-white placeholder:text-stone-500 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30';
@@ -193,7 +101,7 @@ export default function Dashboard() {
     }
     try {
       const res = await fetch('/api/admin/dashboard', { cache: 'no-store' });
-      const parsed = await readApiResponse<DashboardPayload>(res);
+      const parsed = await readAdminApiResponse<DashboardPayload>(res);
       if (parsed.ok) {
         setMesas(parsed.data.mesas);
         setReservas(parsed.data.reservas);
@@ -214,7 +122,7 @@ export default function Dashboard() {
     void (async () => {
       try {
         const res = await fetch('/api/admin/weather', { cache: 'no-store' });
-        const parsed = await readApiResponse<{ days: Record<string, DayWeatherPublic> }>(res);
+        const parsed = await readAdminApiResponse<{ days: Record<string, DayWeatherPublic> }>(res);
         if (!cancelled && parsed.ok) {
           setWeatherByDate(parsed.data.days);
         }
@@ -454,7 +362,7 @@ export default function Dashboard() {
       return;
     }
     const res = await fetch(`/api/admin/reservas/${id}`, { method: 'DELETE' });
-    const parsed = await readApiResponse<unknown>(res);
+    const parsed = await readAdminApiResponse<unknown>(res);
     if (parsed.ok) {
       await loadDashboardData('refresh');
       showToast('Reserva eliminada.');
@@ -467,7 +375,7 @@ export default function Dashboard() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ estado }),
     });
-    const parsed = await readApiResponse<unknown>(res);
+    const parsed = await readAdminApiResponse<unknown>(res);
     if (parsed.ok) {
       await loadDashboardData('refresh');
     }
@@ -544,7 +452,7 @@ export default function Dashboard() {
       return;
     }
     const res = await fetch(`/api/admin/mesas/${editingMesa.id}`, { method: 'DELETE' });
-    const parsed = await readApiResponse<unknown>(res);
+    const parsed = await readAdminApiResponse<unknown>(res);
     if (parsed.ok) {
       setShowMesaModal(false);
       await loadDashboardData('refresh');

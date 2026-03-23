@@ -3,7 +3,7 @@ import { restaurant } from "@/config/restaurant"
 
 export default function Terms() {
   return (
-    <main className="max-w-2xl mx-auto py-12 px-4">
+    <article className="max-w-2xl mx-auto py-12 px-4">
       <h1 className="font-serif text-3xl font-bold mb-6 text-white">Términos y Condiciones</h1>
       <p className="text-[#8C8C8C] mb-4">
         Bienvenido a <strong className="text-white">{restaurant.name}</strong>. Al acceder y utilizar este sitio web, aceptás los siguientes términos y condiciones en su totalidad.
@@ -36,6 +36,6 @@ export default function Terms() {
       <p className="text-[#8C8C8C]">
         Para consultas sobre estos términos, contactanos a {restaurant.email}.
       </p>
-    </main>
+    </article>
   )
 }

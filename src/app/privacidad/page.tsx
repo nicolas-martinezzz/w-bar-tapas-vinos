@@ -2,7 +2,7 @@ import type React from "react"
 
 export default function Privacidad() {
   return (
-    <main className="max-w-2xl mx-auto py-12 px-4">
+    <article className="max-w-2xl mx-auto py-12 px-4">
       <h1 className="font-serif text-3xl font-bold mb-6 text-white">Política de Privacidad</h1>
       <p className="text-[#8C8C8C] mb-4">
         En <strong className="text-white">W Bar de tapas y vinos</strong>, nos comprometemos a proteger la privacidad de nuestros usuarios y clientes. Esta Política de Privacidad explica cómo recopilamos, utilizamos y protegemos su información personal cuando visita nuestro sitio web.
@@ -54,6 +54,6 @@ export default function Privacidad() {
       <p className="text-[#8C8C8C]">
         Nos reservamos el derecho de modificar esta política para adaptarla a novedades legislativas o jurisprudenciales.
       </p>
-    </main>
+    </article>
   )
 }

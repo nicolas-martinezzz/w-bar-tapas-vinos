@@ -1,5 +1,18 @@
 const encoder = new TextEncoder();
 
+function timingSafeEqualUtf8(a: string, b: string): boolean {
+  const ba = encoder.encode(a);
+  const bb = encoder.encode(b);
+  if (ba.length !== bb.length) {
+    return false;
+  }
+  let diff = 0;
+  for (let i = 0; i < ba.length; i++) {
+    diff |= ba[i] ^ bb[i];
+  }
+  return diff === 0;
+}
+
 export const ADMIN_SESSION_COOKIE = 'admin_session';
 export const ADMIN_SESSION_DURATION_SECONDS = 60 * 60 * 8;
 
@@ -62,7 +75,7 @@ export async function verifyAdminSessionToken(
   }
 
   const expectedSignature = await signPayload(payloadBase64Url, secret);
-  if (signature !== expectedSignature) {
+  if (!timingSafeEqualUtf8(signature, expectedSignature)) {
     return false;
   }
 

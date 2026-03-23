@@ -8,7 +8,7 @@ import { restaurant, openingHours } from "@/config/restaurant"
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col bg-[#1a1a1a] text-white">
+    <div className="flex min-h-screen flex-col bg-[#1a1a1a] text-white">
       <Hero />
       <RestaurantSection />
       <MenuSection />
@@ -58,6 +58,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }
