@@ -98,6 +98,12 @@ export default function Dashboard() {
     filter === 'todas' ? true : r.estado === filter
   );
 
+  const hoy = new Date().toISOString().split('T')[0];
+  const reservasHoy = reservas.filter(r => r.fecha === hoy).length;
+  const reservasPendientes = reservas.filter(r => r.estado === 'pendiente').length;
+  const reservasConfirmadas = reservas.filter(r => r.estado === 'confirmada').length;
+  const totalReservas = reservas.length;
+
   const getEstadoColor = (estado: string) => {
     switch (estado) {
       case 'pendiente': return 'bg-yellow-500/20 text-yellow-400';
@@ -118,6 +124,25 @@ export default function Dashboard() {
 
   return (
     <div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+          <p className="text-zinc-400 text-sm">Hoy</p>
+          <p className="text-2xl font-bold text-amber-500">{reservasHoy}</p>
+        </div>
+        <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+          <p className="text-zinc-400 text-sm">Pendientes</p>
+          <p className="text-2xl font-bold text-yellow-500">{reservasPendientes}</p>
+        </div>
+        <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+          <p className="text-zinc-400 text-sm">Confirmadas</p>
+          <p className="text-2xl font-bold text-green-500">{reservasConfirmadas}</p>
+        </div>
+        <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+          <p className="text-zinc-400 text-sm">Total</p>
+          <p className="text-2xl font-bold text-white">{totalReservas}</p>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Gestión de Reservas</h1>
         <div className="flex gap-4">
